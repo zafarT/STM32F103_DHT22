@@ -1,0 +1,5 @@
+../Core/Src/dht22.c:7:6:DHT22_StartMeasurement	8	static
+../Core/Src/dht22.c:25:6:DHT22_SetPinOutput	24	static
+../Core/Src/dht22.c:33:6:DHT22_SetPinInput	24	static
+../Core/Src/dht22.c:42:6:delay_us	16	static
+../Core/Src/dht22.c:49:6:DHT22_Decode	160	dynamic

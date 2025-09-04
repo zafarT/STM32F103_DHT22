@@ -1,0 +1,5 @@
+../Core/Src/dht22.c:26:6:DHT22_SetPinOutput	1
+../Core/Src/dht22.c:34:6:DHT22_SetPinInput	1
+../Core/Src/dht22.c:43:6:microDelay	2
+../Core/Src/dht22.c:8:6:DHT22_StartMeasurement	1
+../Core/Src/dht22.c:50:6:decodeDHT22	5

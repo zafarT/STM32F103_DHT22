@@ -68,3 +68,29 @@ In main.c or your setup function:
 
 
 DHT22_Init(&htim1, GPIOA, GPIO_PIN_8, TIM_CHANNEL_1);
+```
+
+🚀 How to Use
+1. Start a Measurement
+```c
+DHT22_Data data = DHT22_Read();
+
+if (data.status == 0) {
+    // ✅ Success
+    float temperature = data.temperature;
+    float humidity = data.humidity;
+} else if (data.status == 1) {
+    // ❌ Checksum error
+} else if (data.status == 2) {
+    // ⏱️ Timeout (no response from sensor)
+}
+```
+2. Input Capture Callback
+In stm32f1xx_it.c or wherever your TIM IC callback is defined:
+```c
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == TIM1 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+        DHT22_ProcessCapture();
+    }
+}
+```

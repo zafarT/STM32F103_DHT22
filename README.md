@@ -94,3 +94,30 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     }
 }
 ```
+# 🤝 Contributing to DHT22 STM32 Driver
+
+Thank you for considering contributing to this project! Whether you're fixing bugs, improving documentation, or adding new features — your help is appreciated.
+
+---
+
+## 🧰 Ways to Contribute
+
+- 🐞 Report bugs or issues
+- 💡 Suggest new features or improvements
+- 🛠️ Submit pull requests with code changes
+- 📚 Improve documentation or examples
+
+---
+
+## 🚀 Getting Started
+
+### 1. Fork the Repository
+
+Click the **Fork** button at the top right of this page to create your own copy.
+
+### 2. Clone Your Fork
+
+```bash
+git clone https://github.com/your-username/dht22-stm32-driver.git
+cd dht22-stm32-driver
+```

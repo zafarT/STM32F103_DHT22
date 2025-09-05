@@ -319,30 +319,33 @@ void I2C1_ER_IRQHandler(void)
 /* USER CODE BEGIN 1 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-	if (htim->Instance == TIM2) {
+	if (htim->Instance == TIM2)
+	{
 		HAL_TIM_Base_Start(&htim1);
 		DHT22_Data data = DHT22_Read();
-		if(!data.status)
+
+		if(!data.status && !data.ready)
 		{
-//			char tempStr[8];
-//			char humStr[8];
-//			SSD1306_Clear();
-//			SSD1306_GotoXY (0,0);
-//			SSD1306_Puts ("Temp: ", &Font_7x10, 1);
-//			sprintf(tempStr,  "%.1f", data.temperature);
-//			SSD1306_GotoXY (40,0);
-//			SSD1306_Puts (tempStr, &Font_7x10, 1);
-//			SSD1306_GotoXY (0, 30);
-//			SSD1306_Puts ("Hum: ", &Font_7x10, 1);
-//			SSD1306_GotoXY (40, 30);
-//			sprintf(humStr, "%.1f", data.humidity);
-//			SSD1306_Puts (humStr, &Font_7x10, 1);
-//			SSD1306_GotoXY (40, 50);
-//			SSD1306_Puts ("24.5", &Font_7x10, 1);
-//			SSD1306_UpdateScreen();
+			char tempStr[8];
+			char humStr[8];
+
+			SSD1306_GotoXY (0,0);
+			SSD1306_Puts ("Temp: ", &Font_11x18, 1);
+			sprintf(tempStr,  "%.1f", data.temperature);
+			SSD1306_GotoXY (60,0);
+			SSD1306_Puts (tempStr, &Font_11x18, 1);
+			SSD1306_GotoXY (0, 30);
+			SSD1306_Puts ("Hum: ", &Font_11x18, 1);
+			SSD1306_GotoXY (50, 30);
+			sprintf(humStr, "%.1f", data.humidity);
+			SSD1306_Puts (humStr, &Font_11x18, 1);
+
+			SSD1306_UpdateScreen();
 
 			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
 		}
+
+
 
 	}
 
@@ -352,22 +355,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim->Instance == TIM1 && htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1)
 	{
-		//dataReady = 1;
-		DHT22_Data data = DHT22_Decode();
-		char tempStr[8];
-		char humStr[8];
-		SSD1306_Clear();
-		SSD1306_GotoXY (0,0);
-		SSD1306_Puts ("Temp: ", &Font_7x10, 1);
-		sprintf(tempStr,  "%.1f", data.temperature);
-		SSD1306_GotoXY (40,0);
-		SSD1306_Puts (tempStr, &Font_7x10, 1);
-		SSD1306_GotoXY (0, 30);
-		SSD1306_Puts ("Hum: ", &Font_7x10, 1);
-		SSD1306_GotoXY (40, 30);
-		sprintf(humStr, "%.1f", data.humidity);
-		SSD1306_Puts (humStr, &Font_7x10, 1);
-		SSD1306_UpdateScreen();
+		DHT22_ProcessCapture();
 	}
 }
 

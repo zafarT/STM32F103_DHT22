@@ -18,6 +18,7 @@ typedef struct {
 	float temperature;
 	float humidity;
     uint8_t status;  // 0 = OK, 1 = Checksum error, 2 = Timeout
+    uint8_t ready;
 } DHT22_Data;
 
 
@@ -38,7 +39,7 @@ typedef struct {
 #define DHT_EDGE_SKIP 2
 #define DHT_EDGE_COUNT 41
 
-extern uint32_t captureBuffer[DHT_CAPTURE_COUNT];
+extern volatile uint32_t captureBuffer[DHT_CAPTURE_COUNT];
 extern volatile uint8_t dataReady;
 
 DHT22_Data DHT22_Read();
@@ -55,5 +56,7 @@ void delay_us(uint16_t delay);
 
 void DHT22_Init(TIM_HandleTypeDef *htim, GPIO_TypeDef *port, uint16_t pin);
 
+
+void DHT22_ProcessCapture(void);
 
 #endif /* INC_DHT22_H_ */

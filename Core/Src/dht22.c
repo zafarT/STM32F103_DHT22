@@ -2,8 +2,10 @@
 #include "dht22.h"
 
 
-uint32_t captureBuffer[DHT_CAPTURE_COUNT];
+volatile uint32_t captureBuffer[DHT_CAPTURE_COUNT];
 volatile uint8_t dataReady = 0;
+
+static DHT22_Data latestData = {0};
 
 static TIM_HandleTypeDef *dhtTimer;
 static GPIO_TypeDef *dhtPort;
@@ -18,7 +20,10 @@ void DHT22_Init(TIM_HandleTypeDef *htim, GPIO_TypeDef *port, uint16_t pin) {
 
 
 
-DHT22_Data DHT22_Read(void) {
+
+DHT22_Data DHT22_Read(void)
+{
+	latestData.ready = 0;
 
 	 __HAL_TIM_SET_COUNTER(&htim1, 0);
 	HAL_TIM_IC_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)captureBuffer, DHT_CAPTURE_COUNT);
@@ -35,13 +40,16 @@ DHT22_Data DHT22_Read(void) {
     delay_us(DHT_START_HIGH_US);
     DHT22_SetPinInput();
 
-//    uint32_t timeout = HAL_GetTick() + 10;  // Wait max 10 ms
-//    while (!dataReady && HAL_GetTick() < timeout)
-//    {
-//    	dataReady = 0;
-//
-//    	return DHT22_Decode();;
-//    }
+    uint32_t timeout = HAL_GetTick() + 10;  // Wait max 10 ms
+    while (!latestData.ready && HAL_GetTick() < timeout)
+    {
+		latestData.ready = 0;
+    	return latestData;
+    }
+
+
+
+    return latestData;
 }
 
 
@@ -71,7 +79,7 @@ void delay_us(uint16_t delay)
 
 DHT22_Data DHT22_Decode(void)
 {
-	DHT22_Data result = {0};
+	//DHT22_Data latestData = {0};
     // Step 1: Extract non-zero timestamps
     int edgeCount = DHT_EDGE_COUNT;
     uint16_t timestamps[edgeCount];
@@ -104,28 +112,33 @@ DHT22_Data DHT22_Decode(void)
     // Step 5: Verify checksum
     uint8_t checksum = (data[0] + data[1] + data[2] + data[3]) & 0xFF;
 
-    HAL_TIM_Base_Stop(&htim1);
-    HAL_TIM_IC_Stop(&htim1, TIM_CHANNEL_1);
-
-    result.status = 1;
-    result.humidity = (float)((data[0] << 8) | data[1])/10;
+    latestData.status = 1;
+    latestData.humidity = (float)((data[0] << 8) | data[1])/10;
 
     if(checksum == data[4])
     {
-    	result.humidity = (float)((data[0] << 8) | data[1])/10;
-//    	if (data[3]>127) // If negative temperature
-//    	{
-//    		result.temperature = (float)data[2]/10*(-1);
-//    	}
-//    	else
-//    	{
-    		result.temperature = (float)((data[2] << 8) | data[3])/10;
-//    	}
+    	latestData.humidity = (float)((data[0] << 8) | data[1])/10;
+    	if (data[2]&0x80) // If negative temperature
+    	{
+    		latestData.temperature = -(float)(((data[2] & 0x7F) << 8) | data[3])/10;
+    	}
+    	else
+    	{
+    		latestData.temperature = (float)((data[2] << 8) | data[3])/10;
+    	}
 
-    	result.status = 0;
+    	latestData.status = 0;
     }
 
-    return  result;
-
+    return  latestData;
 
 }
+
+void DHT22_ProcessCapture(void)
+{
+    latestData = DHT22_Decode();  // Decode captured data
+    latestData.ready = 1;
+    HAL_TIM_Base_Stop(&htim1);
+    HAL_TIM_IC_Stop(&htim1, TIM_CHANNEL_1);
+}
+

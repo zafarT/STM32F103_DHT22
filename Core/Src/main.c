@@ -436,24 +436,9 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel2_IRQn interrupt configuration */
-
-
-
-  hdma_tim1_ch1.Instance = DMA1_Channel2;
-  hdma_tim1_ch1.Init.Direction = DMA_PERIPH_TO_MEMORY;
-  hdma_tim1_ch1.Init.PeriphInc = DMA_PINC_DISABLE;
-  hdma_tim1_ch1.Init.MemInc = DMA_MINC_ENABLE;
-  hdma_tim1_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-  hdma_tim1_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-  hdma_tim1_ch1.Init.Mode = DMA_CIRCULAR;
-  hdma_tim1_ch1.Init.Priority = DMA_PRIORITY_HIGH;
-
   HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
-  if (HAL_DMA_Init(&hdma_tim1_ch1) != HAL_OK) {
-      Error_Handler();
-  }
 }
 
 /**

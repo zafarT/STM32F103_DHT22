@@ -3,8 +3,7 @@
 
 
 uint32_t captureBuffer[DHT_CAPTURE_COUNT];
-
-
+volatile uint8_t dataReady = 0;
 
 static TIM_HandleTypeDef *dhtTimer;
 static GPIO_TypeDef *dhtPort;
@@ -19,21 +18,30 @@ void DHT22_Init(TIM_HandleTypeDef *htim, GPIO_TypeDef *port, uint16_t pin) {
 
 
 
-void DHT22_StartMeasurement(void) {
+DHT22_Data DHT22_Read(void) {
 
-
-	__HAL_TIM_SET_COUNTER(&htim1, 0);
+	 __HAL_TIM_SET_COUNTER(&htim1, 0);
 	HAL_TIM_IC_Start_DMA(&htim1, TIM_CHANNEL_1, (uint32_t*)captureBuffer, DHT_CAPTURE_COUNT);
 
     DHT22_SetPinOutput();
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+
+
+
     delay_us(DHT_START_LOW_US );
+
+
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-    delay_us(DHT_START_HIGH_US );
+    delay_us(DHT_START_HIGH_US);
     DHT22_SetPinInput();
 
-
-
+//    uint32_t timeout = HAL_GetTick() + 10;  // Wait max 10 ms
+//    while (!dataReady && HAL_GetTick() < timeout)
+//    {
+//    	dataReady = 0;
+//
+//    	return DHT22_Decode();;
+//    }
 }
 
 
@@ -61,7 +69,8 @@ void delay_us(uint16_t delay)
 }
 
 
-void DHT22_Decode(void) {
+DHT22_Data DHT22_Decode(void)
+{
 	DHT22_Data result = {0};
     // Step 1: Extract non-zero timestamps
     int edgeCount = DHT_EDGE_COUNT;
@@ -95,22 +104,28 @@ void DHT22_Decode(void) {
     // Step 5: Verify checksum
     uint8_t checksum = (data[0] + data[1] + data[2] + data[3]) & 0xFF;
 
+    HAL_TIM_Base_Stop(&htim1);
+    HAL_TIM_IC_Stop(&htim1, TIM_CHANNEL_1);
+
+    result.status = 1;
+    result.humidity = (float)((data[0] << 8) | data[1])/10;
+
     if(checksum == data[4])
     {
-    	result.humidity = ((data[0] << 8) | data[1]) / 10.0f;
-    	result.temperature = ((data[2] << 8) | data[3]) / 10.0f;
+    	result.humidity = (float)((data[0] << 8) | data[1])/10;
+//    	if (data[3]>127) // If negative temperature
+//    	{
+//    		result.temperature = (float)data[2]/10*(-1);
+//    	}
+//    	else
+//    	{
+    		result.temperature = (float)((data[2] << 8) | data[3])/10;
+//    	}
+
     	result.status = 0;
     }
-    else
-    {
-    	result.status = 1;
-    }
 
+    return  result;
 
-
-
-
-	HAL_TIM_Base_Stop(&htim1);
-	HAL_TIM_IC_Stop(&htim1, TIM_CHANNEL_1);
 
 }

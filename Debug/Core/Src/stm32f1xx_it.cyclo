@@ -15,5 +15,5 @@
 ../Core/Src/stm32f1xx_it.c:280:6:TIM2_IRQHandler	1
 ../Core/Src/stm32f1xx_it.c:294:6:I2C1_EV_IRQHandler	1
 ../Core/Src/stm32f1xx_it.c:308:6:I2C1_ER_IRQHandler	1
-../Core/Src/stm32f1xx_it.c:320:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/stm32f1xx_it.c:330:6:HAL_TIM_IC_CaptureCallback	3
+../Core/Src/stm32f1xx_it.c:320:6:HAL_TIM_PeriodElapsedCallback	3
+../Core/Src/stm32f1xx_it.c:351:6:HAL_TIM_IC_CaptureCallback	3

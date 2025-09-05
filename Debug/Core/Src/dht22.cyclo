@@ -1,7 +1,7 @@
-../Core/Src/dht22.c:14:6:DHT22_Init	1
-../Core/Src/dht22.c:24:12:DHT22_Read	3
-../Core/Src/dht22.c:56:6:DHT22_SetPinOutput	1
-../Core/Src/dht22.c:64:6:DHT22_SetPinInput	1
-../Core/Src/dht22.c:73:6:delay_us	2
-../Core/Src/dht22.c:80:12:DHT22_Decode	9
-../Core/Src/dht22.c:137:6:DHT22_ProcessCapture	1
+../Core/Src/dht22.c:21:6:DHT22_Init	1
+../Core/Src/dht22.c:29:12:DHT22_Read	4
+../Core/Src/dht22.c:62:6:DHT22_SetPinOutput	1
+../Core/Src/dht22.c:71:6:DHT22_SetPinInput	1
+../Core/Src/dht22.c:80:6:delay_us	2
+../Core/Src/dht22.c:87:12:DHT22_Decode	9
+../Core/Src/dht22.c:138:6:DHT22_ProcessCapture	1

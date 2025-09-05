@@ -28,8 +28,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-extern float humidity;
-extern float temperature;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
